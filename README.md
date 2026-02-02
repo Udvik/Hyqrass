@@ -54,7 +54,3 @@ and fair selection systems.
 All tools and libraries used are **free and open-source**.
 
 ---
-
-
-## Project Structure
-
