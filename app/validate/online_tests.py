@@ -8,7 +8,6 @@ def monobit_fraction(bits: str) -> float:
     return ones / len(bits)
 
 def runs_count(bits: str) -> int:
-    # number of runs in bitstring
     if not bits:
         return 0
     runs = 1
@@ -18,7 +17,6 @@ def runs_count(bits: str) -> int:
     return runs
 
 def shannon_entropy_bits(bits: str) -> float:
-    # entropy per bit (0..1)
     if not bits:
         return 0.0
     p1 = bits.count("1") / len(bits)
@@ -27,5 +25,4 @@ def shannon_entropy_bits(bits: str) -> float:
     for p in (p0, p1):
         if p > 0:
             ent -= p * math.log2(p)
-    # max for binary is 1
     return ent
