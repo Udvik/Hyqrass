@@ -8,7 +8,6 @@ from app.validate.score import score_bytes
 DEFAULT_THRESHOLD = 60
 
 def _expand_sha256(seed: bytes, n_bytes: int) -> bytes:
-    """Expand a 32-byte seed into n_bytes using counter-based SHA-256."""
     out = b""
     counter = 0
     while len(out) < n_bytes:
@@ -32,7 +31,6 @@ def get_random(n_bytes: int, mode: str = "hybrid_mix", threshold: int = DEFAULT_
         source = "quantum"
 
     elif mode == "hybrid_failover":
-        # Try quantum first; fallback to classical on error/low score
         try:
             qraw = get_quantum_bytes(n_bytes)
             qscore = score_bytes(qraw)["health_score"]
@@ -47,7 +45,6 @@ def get_random(n_bytes: int, mode: str = "hybrid_mix", threshold: int = DEFAULT_
             source = "classical_fallback_error"
 
     elif mode == "hybrid_mix":
-        # Mix quantum + classical, then extract with SHA-256
         qb = get_quantum_bytes(n_bytes)
         cb = get_classical_bytes(n_bytes)
         seed = hashlib.sha256(qb + cb).digest()

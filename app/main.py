@@ -17,7 +17,6 @@ def api_get_random(
 ):
     r = get_random(n_bytes=n_bytes, mode=mode, threshold=threshold)
 
-    # ✅ SQLite log happens here
     log_request(
         mode=mode,
         source=r["source"],
