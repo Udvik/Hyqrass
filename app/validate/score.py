@@ -18,8 +18,8 @@ def score_bytes(data: bytes) -> dict:
     
     score -= int(min(abs(runs - expected) / expected, 1.0) * 30)
 
-    
-    score -= int((1.0 - ent) * 50)
+    run_dev = abs(runs - expected) / expected
+    score -= int(min(run_dev, 1.0) * 60)
 
     
     score = max(0, min(100, score))
