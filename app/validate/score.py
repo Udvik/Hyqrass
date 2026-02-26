@@ -1,27 +1,46 @@
-from .online_tests import bytes_to_bits, monobit_fraction, runs_count, shannon_entropy_bits
+# app/validate/score.py
+
+from .online_tests import (
+    bytes_to_bits,
+    monobit_fraction,
+    runs_count,
+    shannon_entropy_bits,
+    chi_square_test_bytes,
+)
 
 def score_bytes(data: bytes) -> dict:
     bits = bytes_to_bits(data)
     p1 = monobit_fraction(bits)
     runs = runs_count(bits)
     ent = shannon_entropy_bits(bits)
+    chi = chi_square_test_bytes(data)
 
-   
+    n = len(bits)
+    expected_runs = n / 2 if n > 0 else 0
+
     score = 100
 
-    
-    score -= int(abs(p1 - 0.5) * 400) 
+    # Monobit penalty: closer to 0.5 is better
+    score -= int(abs(p1 - 0.5) * 400)
 
-    
-    n = len(bits)
-    expected = n / 2
-    
-    score -= int(min(abs(runs - expected) / expected, 1.0) * 30)
+    # Runs penalty: penalize deviation from expected (too low OR too high)
+    if expected_runs > 0:
+        run_dev = abs(runs - expected_runs) / expected_runs  # 0.0 best
+        score -= int(min(run_dev, 1.0) * 60)
 
-    run_dev = abs(runs - expected) / expected
-    score -= int(min(run_dev, 1.0) * 60)
+    # Chi-square penalty (lightweight):
+    # For uniform bytes, chi2 is typically around dof (255).
+    # Penalize only when chi2 is very large compared to dof.
+    dof = chi.get("dof", 255)
+    chi2 = chi.get("chi2", 0.0)
 
-    
+    if dof > 0:
+        if chi2 > 2.0 * dof:
+            score -= 10
+        if chi2 > 3.0 * dof:
+            score -= 20
+
+    # Clamp score into [0,100]
     score = max(0, min(100, score))
 
     return {
@@ -30,6 +49,8 @@ def score_bytes(data: bytes) -> dict:
             "p_one": p1,
             "runs": runs,
             "entropy_per_bit": ent,
-            "n_bits": n
-        }
+            "n_bits": n,
+            "chi2": chi2,
+            "chi2_dof": dof,
+        },
     }
