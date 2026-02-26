@@ -1,5 +1,31 @@
 import math
 
+def chi_square_test_bytes(data: bytes):
+    """
+    Chi-square test for uniformity over byte values (0..255).
+    Returns (chi2, dof). Lower chi2 generally indicates closer to uniform.
+    Note: This is a lightweight check, not a full NIST suite replacement.
+    """
+    if not data:
+        return {"chi2": 0.0, "dof": 0}
+
+    n = len(data)
+    expected = n / 256.0
+
+    # frequency of each byte value
+    freq = [0] * 256
+    for b in data:
+        freq[b] += 1
+
+    # chi-square statistic
+    chi2 = 0.0
+    for c in freq:
+        diff = c - expected
+        chi2 += (diff * diff) / expected if expected > 0 else 0.0
+
+    dof = 255
+    return {"chi2": chi2, "dof": dof}
+
 def bytes_to_bits(data: bytes) -> str:
     return "".join(f"{b:08b}" for b in data)
 
