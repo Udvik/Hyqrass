@@ -1,0 +1,5 @@
+source,count,avg_monobit_dev,avg_runs_dev,avg_entropy_per_bit,pass_rate_%,avg_health_score,avg_latency_ms,monobit_dev_std,runs_dev_std,entropy_std,health_p05,entropy_p05,fail_rate_%
+quantum,2454,0.034252,4.35,0.99477,75.26,83.07,9.3,0.025172,3.25,0.006882,64.0,0.982317,1.79
+classical_fallback_low_score,45,0.035417,4.07,0.994622,75.56,82.69,10.54,0.024851,3.66,0.006628,62.8,0.982317,2.22
+hybrid_mix,1301,0.034349,4.39,0.994563,76.17,82.94,8.8,0.02642,3.37,0.007685,61.0,0.978584,3.38
+classical,1200,0.035872,4.45,0.994127,74.83,82.37,0.17,0.027221,3.41,0.00826,60.0,0.978584,4.67
