@@ -1,26 +1,34 @@
+# scripts/run_benchmark.py
 import time
 import requests
 
 BASE = "http://127.0.0.1:8000"
 
-def hit(mode: str, n_bytes=16, threshold=60, count=1000):
+def hit(mode: str, count: int, n_bytes: int):
     for i in range(count):
-        requests.get(f"{BASE}/get_random", params={
-            "n_bytes": n_bytes,
-            "mode": mode,
-            "threshold": threshold,
-            "include_metrics": True
-        })
+        requests.get(
+            f"{BASE}/get_random",
+            params={
+                "n_bytes": n_bytes,
+                "mode": mode,
+                "include_metrics": True,
+            },
+            timeout=30,
+        )
         if (i + 1) % 100 == 0:
-            print(mode, i + 1)
-        time.sleep(0.01)  # tiny delay so timestamps differ
+            print(f"{mode}: {i+1}/{count}")
+        time.sleep(0.005)
 
 def main():
-    # Clean run: do each mode in blocks
-    hit("classical", count=1000)
-    hit("quantum", count=1000)
-    hit("hybrid_mix", count=1000)
-    hit("hybrid_failover", count=1000)  # optional
+    # Use a fixed block size for fair comparison
+    N_BYTES = 256
+    N = 500  # set to 1000 for final run
+
+    hit("classical", N, N_BYTES)
+    hit("quantum", N, N_BYTES)
+    hit("hybrid_mix", N, N_BYTES)
+
+    print("Benchmark completed.")
 
 if __name__ == "__main__":
     main()

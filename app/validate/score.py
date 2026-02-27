@@ -20,27 +20,23 @@ def score_bytes(data: bytes) -> dict:
 
     score = 100
 
-    # Monobit penalty: closer to 0.5 is better
+    # Monobit penalty
     score -= int(abs(p1 - 0.5) * 400)
 
-    # Runs penalty: penalize deviation from expected (too low OR too high)
+    # Runs penalty (penalize both too low and too high runs)
     if expected_runs > 0:
-        run_dev = abs(runs - expected_runs) / expected_runs  # 0.0 best
+        run_dev = abs(runs - expected_runs) / expected_runs
         score -= int(min(run_dev, 1.0) * 60)
 
-    # Chi-square penalty (lightweight):
-    # For uniform bytes, chi2 is typically around dof (255).
-    # Penalize only when chi2 is very large compared to dof.
+    # Chi-square penalty (lightweight)
     dof = chi.get("dof", 255)
     chi2 = chi.get("chi2", 0.0)
-
     if dof > 0:
         if chi2 > 2.0 * dof:
             score -= 10
         if chi2 > 3.0 * dof:
             score -= 20
 
-    # Clamp score into [0,100]
     score = max(0, min(100, score))
 
     return {
