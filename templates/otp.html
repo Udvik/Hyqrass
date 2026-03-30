@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>HyQRaaS OTP System</title>
+    <style>
+        body {
+            font-family: Arial;
+            text-align: center;
+            margin-top: 50px;
+        }
+        input, button {
+            padding: 10px;
+            margin: 10px;
+        }
+        #otpDisplay {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>🔐 OTP Generator</h1>
+
+<label>Enter OTP Length:</label>
+<input type="number" id="length" value="6" min="1" max="12">
+
+<br>
+
+<button onclick="generateOTP()">Generate OTP</button>
+
+<div id="otpDisplay"></div>
+
+<hr>
+
+<h2>Verify OTP</h2>
+
+<input type="text" id="userOtp" placeholder="Enter OTP">
+<br>
+<button onclick="verifyOTP()">Verify</button>
+
+<h3 id="result"></h3>
+
+<script>
+let currentOTP = "";
+let expiryTime = 0;
+
+async function generateOTP() {
+    let len = document.getElementById("length").value;
+
+    let res = await fetch(`/otp?n_digits=${len}`);
+    let data = await res.json();
+
+    currentOTP = data.otp;
+    expiryTime = Date.now() + (data.expires_in * 1000);
+
+    document.getElementById("otpDisplay").innerText = "OTP: " + currentOTP;
+    document.getElementById("result").innerText = "";
+}
+
+function verifyOTP() {
+    let userInput = document.getElementById("userOtp").value;
+
+    if (Date.now() > expiryTime) {
+        document.getElementById("result").innerText = "❌ OTP Expired";
+    } else if (userInput === currentOTP) {
+        document.getElementById("result").innerText = "✅ OTP Verified";
+    } else {
+        document.getElementById("result").innerText = "❌ Invalid OTP";
+    }
+}
+</script>
+
+</body>
+</html>

@@ -30,20 +30,6 @@ def get_random(n_bytes: int, mode: str = "hybrid_mix", threshold: int = DEFAULT_
         raw = get_quantum_bytes(n_bytes)
         source = "quantum"
 
-    elif mode == "hybrid_failover":
-        try:
-            qraw = get_quantum_bytes(n_bytes)
-            qscore = score_bytes(qraw)["health_score"]
-            if qscore < threshold:
-                raw = get_classical_bytes(n_bytes)
-                source = "classical_fallback_low_score"
-            else:
-                raw = qraw
-                source = "quantum"
-        except Exception:
-            raw = get_classical_bytes(n_bytes)
-            source = "classical_fallback_error"
-
     elif mode == "hybrid_mix":
         qb = get_quantum_bytes(n_bytes)
         cb = get_classical_bytes(n_bytes)
@@ -52,7 +38,7 @@ def get_random(n_bytes: int, mode: str = "hybrid_mix", threshold: int = DEFAULT_
         source = "hybrid_mix"
 
     else:
-        raise ValueError("mode must be one of: classical, quantum, hybrid_failover, hybrid_mix")
+        raise ValueError("mode must be one of: classical, quantum, hybrid_mix")
 
     scored = score_bytes(raw)
     latency_ms = (time.time() - t0) * 1000.0

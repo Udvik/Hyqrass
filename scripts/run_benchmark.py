@@ -1,4 +1,4 @@
-# scripts/run_benchmark.py
+
 import time
 import requests
 
@@ -13,16 +13,16 @@ def hit(mode: str, count: int, n_bytes: int):
                 "mode": mode,
                 "include_metrics": True,
             },
-            timeout=30,
+            timeout=100,
         )
         if (i + 1) % 100 == 0:
             print(f"{mode}: {i+1}/{count}")
         time.sleep(0.005)
 
 def main():
-    # Use a fixed block size for fair comparison
-    N_BYTES = 256
-    N = 500  # set to 1000 for final run
+    
+    N_BYTES = 64
+    N = 1000
 
     hit("classical", N, N_BYTES)
     hit("quantum", N, N_BYTES)

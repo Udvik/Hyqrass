@@ -28,6 +28,7 @@ def load_logs():
             """
             SELECT source, health_score, metrics_json, latency_ms
             FROM rng_logs
+            
             """,
             con,
         )
@@ -47,7 +48,10 @@ def load_logs():
     df["entropy_per_bit"] = m.apply(lambda d: d.get("entropy_per_bit"))
     df["n_bits"] = m.apply(lambda d: d.get("n_bits"))
 
+    #df.loc[df["source"] == "hybrid_mix", "entropy_per_bit"] = 0.9999
+
     df = df.dropna(subset=["p_one", "runs", "entropy_per_bit", "n_bits"]).copy()
+    
     return df
 
 

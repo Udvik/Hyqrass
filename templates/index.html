@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>HyQRaaS Dashboard</title>
+</head>
+<body style="text-align:center; font-family:Arial;">
+
+<h1>⚡ HyQRaaS</h1>
+<p>Hybrid Quantum Randomness-as-a-Service</p>
+
+<hr>
+
+<h2>🔢 Generate Random Number</h2>
+
+<select id="mode">
+    <option value="classical">Classical</option>
+    <option value="quantum">Quantum</option>
+    <option value="hybrid_mix">Hybrid</option>
+</select>
+
+<input type="number" id="bytes" value="16">
+
+<button onclick="generateRandom()">Generate</button>
+
+<p id="output"></p>
+
+<hr>
+
+<h2>📦 Applications</h2>
+
+<a href="/otp-ui">🔐 OTP System</a><br><br>
+<a href="/lottery-ui">🎰 Lottery System</a>
+
+<script>
+async function generateRandom() {
+    let mode = document.getElementById("mode").value;
+    let bytes = document.getElementById("bytes").value;
+
+    let res = await fetch(`/get_random?n_bytes=${bytes}&mode=${mode}`);
+    let data = await res.json();
+
+    document.getElementById("output").innerText =
+        "Random: " + data.random_number +
+        "\nSource: " + data.source +
+        "\nHealth: " + data.health_score;
+}
+</script>
+
+</body>
+</html>

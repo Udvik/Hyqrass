@@ -1,0 +1,8 @@
+@app.get("/otp-ui", response_class=HTMLResponse)
+def otp_ui(request: Request):
+    return templates.TemplateResponse("otp.html", {"request": request})
+
+
+@app.get("/lottery-ui", response_class=HTMLResponse)
+def lottery_ui(request: Request):
+    return templates.TemplateResponse("lottery.html", {"request": request})
