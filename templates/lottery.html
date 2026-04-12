@@ -1,8 +1,73 @@
-@app.get("/otp-ui", response_class=HTMLResponse)
-def otp_ui(request: Request):
-    return templates.TemplateResponse("otp.html", {"request": request})
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lottery System - HyQRaaS</title>
+    <style>
+        body {
+            font-family: Arial;
+            text-align: center;
+            margin-top: 50px;
+        }
+        input, button {
+            padding: 10px;
+            margin: 10px;
+        }
+        #result {
+            font-size: 20px;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
 
+<h1>🎰 Lottery System</h1>
+<p>Powered by Hybrid Randomness</p>
 
-@app.get("/lottery-ui", response_class=HTMLResponse)
-def lottery_ui(request: Request):
-    return templates.TemplateResponse("lottery.html", {"request": request})
+<hr>
+
+<h3>Enter Participants (comma separated)</h3>
+
+<input type="text" id="participants" placeholder="e.g. A,B,C,D,E">
+
+<br>
+
+<button onclick="runLottery()">Pick Winner</button>
+
+<div id="result"></div>
+
+<br><br>
+
+<a href="/">⬅ Back to Dashboard</a>
+
+<script>
+async function runLottery() {
+    let input = document.getElementById("participants").value;
+
+    if (!input) {
+        document.getElementById("result").innerText = "⚠ Please enter participants";
+        return;
+    }
+
+    let participants = input.split(",").map(p => p.trim()).filter(p => p);
+
+    let res = await fetch("/lottery", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(participants)
+    });
+
+    let data = await res.json();
+
+    document.getElementById("result").innerText =
+        "🏆 Winner: " + data.winner +
+        "\nSource: " + data.source +
+        "\nHealth: " + data.health_score +
+        "\nLatency: " + data.latency_ms + " ms";
+}
+</script>
+
+</body>
+</html>
